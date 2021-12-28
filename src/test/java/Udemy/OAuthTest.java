@@ -9,9 +9,11 @@ import io.restassured.parsing.Parser;
 import io.restassured.path.json.JsonPath;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.testng.Assert;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
 
@@ -19,6 +21,7 @@ import static io.restassured.RestAssured.given;
 //we are putting steps in postman in to automation process here
 public class OAuthTest {
     public static void main(String[] args) throws InterruptedException {
+        String [] courseTitles={"Selenium Webdriver Java","Cypress","Protractor"};
         Driver.getDriver().get("https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.email&auth_url=https://accounts.google.com/o/oauth2/v2/auth&client_id=692183103107-p0m7ent2hk7suguv4vq22hjcfhcr43pj.apps.googleusercontent.com&response_type=code&redirect_uri=https://rahulshettyacademy.com/getCourse.php");
         Driver.getDriver().findElement(By.id("identifierId")).sendKeys(ConfigReader.getProperty("username"));
         Driver.getDriver().findElement(By.xpath("//button[@class='VfPpkd-LgbsSe VfPpkd-LgbsSe-OWXEXe-k8QpJ VfPpkd-LgbsSe-OWXEXe-dgl2Hf nCP5yc AjY5Oe DuMIQc qIypjc TrZEUc lw1w4b']")).click();
@@ -48,6 +51,7 @@ public class OAuthTest {
         //same response after POJO class introduced
         //if you Content-Type header is application/json you dont need to put defatultParser(Parser.JSON)
         //if it is other than that you need to explicitly tell java that it should be a json format by parsing it
+        //The rest is deserialization!!!!!
         GetCourse responseJSON = given().queryParam("access_token", accessToken).expect().defaultParser(Parser.JSON)
                 .when().get("https://rahulshettyacademy.com/getCourse.php").as(GetCourse.class);
         System.out.println("responseJSON.getLinkedIn() = " + responseJSON.getLinkedIn());
@@ -60,11 +64,16 @@ public class OAuthTest {
                 System.out.println("apiCourses.get(i).getPrice() = " + apiCourses.get(i).getPrice());
             }
         }
+
+        //assignment - print me all course titles that are present in webAutomation
+        ArrayList<String> a=new ArrayList<String>();//courses dynamically change that why we used arraylist to change it everytime
         List<webAutomation> webAutomationCourses=responseJSON.getCourses().getWebAutomation();
+
         for (int i=0; i<webAutomationCourses.size(); i++){
-            System.out.println(webAutomationCourses.get(i).getCourseTitle());
-            System.out.println(webAutomationCourses.get(i).getPrice());
+            a.add(webAutomationCourses.get(i).getCourseTitle());
         }
+        List<String> expectedList=Arrays.asList(courseTitles);
+        Assert.assertTrue(a.equals(expectedList));
         // System.out.println(response);
     }
 }
