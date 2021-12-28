@@ -1,6 +1,8 @@
 package Udemy;
 
 import Udemy.POJO.GetCourse;
+import Udemy.POJO.api;
+import Udemy.POJO.webAutomation;
 import Udemy.util.ConfigReader;
 import Udemy.util.Driver;
 import io.restassured.parsing.Parser;
@@ -8,6 +10,7 @@ import io.restassured.path.json.JsonPath;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
@@ -49,7 +52,19 @@ public class OAuthTest {
                 .when().get("https://rahulshettyacademy.com/getCourse.php").as(GetCourse.class);
         System.out.println("responseJSON.getLinkedIn() = " + responseJSON.getLinkedIn());
         System.out.println(responseJSON.getInstructor());
-
+        System.out.println(responseJSON.getCourses().getMobile().get(0).getPrice());
+        System.out.println(responseJSON.getCourses().getApi().get(1).getCourseTitle());
+        List<api> apiCourses=responseJSON.getCourses().getApi();
+        for (int i=0; i<apiCourses.size(); i++){
+            if (apiCourses.get(i).getCourseTitle().equalsIgnoreCase("SoapUI Webservices testing")){
+                System.out.println("apiCourses.get(i).getPrice() = " + apiCourses.get(i).getPrice());
+            }
+        }
+        List<webAutomation> webAutomationCourses=responseJSON.getCourses().getWebAutomation();
+        for (int i=0; i<webAutomationCourses.size(); i++){
+            System.out.println(webAutomationCourses.get(i).getCourseTitle());
+            System.out.println(webAutomationCourses.get(i).getPrice());
+        }
         // System.out.println(response);
     }
 }
