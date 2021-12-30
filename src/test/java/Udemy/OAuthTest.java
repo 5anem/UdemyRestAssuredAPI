@@ -46,11 +46,13 @@ public class OAuthTest {
         JsonPath js = new JsonPath(accessTokenResponse);
         String accessToken = js.getString("access_token");
 
-//        String response = given().queryParam("access_token", accessToken)
-//                .when().get("https://rahulshettyacademy.com/getCourse.php").asString();
+        String response = given().queryParam("access_token", accessToken)
+                .when().get("https://rahulshettyacademy.com/getCourse.php").asString();
+        System.out.println(response);
         //same response after POJO class introduced
         //if you Content-Type header is application/json you dont need to put defatultParser(Parser.JSON)
         //if it is other than that you need to explicitly tell java that it should be a json format by parsing it
+
         //The rest is deserialization!!!!!
         GetCourse responseJSON = given().queryParam("access_token", accessToken).expect().defaultParser(Parser.JSON)
                 .when().get("https://rahulshettyacademy.com/getCourse.php").as(GetCourse.class);
